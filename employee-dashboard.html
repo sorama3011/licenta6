@@ -1,0 +1,878 @@
+<!doctype html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Panou Angajat - Gusturi Românești</title>
+    <meta name="description" content="Panou de control pentru angajații platformei Gusturi Românești.">
+    
+    <!-- Bootstrap 5.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" href="index.html">
+                Gusturi Românești
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">
+                            <i class="bi bi-house"></i> Site Principal
+                        </a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person-badge"></i> <span id="employee-name">Angajat</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="#profile" data-bs-toggle="tab">
+                                <i class="bi bi-person-circle me-2"></i>Profil
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#" onclick="logout()">
+                                <i class="bi bi-box-arrow-right me-2"></i>Deconectare
+                            </a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Employee Dashboard Layout -->
+    <div class="container-fluid" style="margin-top: 56px;">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse" style="min-height: calc(100vh - 56px);">
+                <div class="position-sticky pt-3">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#dashboard" data-bs-toggle="tab">
+                                <i class="bi bi-speedometer2 me-2"></i>
+                                Tablou de Bord
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#products" data-bs-toggle="tab">
+                                <i class="bi bi-box-seam me-2"></i>
+                                Gestionare Prețuri
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#offers" data-bs-toggle="tab">
+                                <i class="bi bi-percent me-2"></i>
+                                Oferte & Promoții
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#profile" data-bs-toggle="tab">
+                                <i class="bi bi-person me-2"></i>
+                                Profilul Meu
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+                <div class="tab-content">
+                    <!-- Dashboard Tab -->
+                    <div class="tab-pane fade show active" id="dashboard">
+                        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+                            <h1 class="h2">Tablou de Bord</h1>
+                            <div class="btn-toolbar mb-2 mb-md-0">
+                                <div class="btn-group me-2">
+                                    <button type="button" class="btn btn-sm btn-outline-secondary">Export</button>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary">Print</button>
+                                </div>
+                                <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle">
+                                    <i class="bi bi-calendar3"></i>
+                                    Această Săptămână
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Stats Cards -->
+                        <div class="row g-4 mb-4">
+                            <div class="col-md-6 col-xl-3">
+                                <div class="card text-white bg-primary">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <h6 class="card-title">Produse Active</h6>
+                                                <h2 class="mb-0">54</h2>
+                                                <small>Din 60 total</small>
+                                            </div>
+                                            <div>
+                                                <i class="bi bi-box-seam" style="font-size: 3rem; opacity: 0.5;"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-xl-3">
+                                <div class="card text-white bg-success">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <h6 class="card-title">Oferte Active</h6>
+                                                <h2 class="mb-0">3</h2>
+                                                <small>Expiră în curând: 1</small>
+                                            </div>
+                                            <div>
+                                                <i class="bi bi-percent" style="font-size: 3rem; opacity: 0.5;"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-xl-3">
+                                <div class="card text-white bg-warning">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <h6 class="card-title">Produse Stoc Limitat</h6>
+                                                <h2 class="mb-0">5</h2>
+                                                <small>Sub 20 unități</small>
+                                            </div>
+                                            <div>
+                                                <i class="bi bi-exclamation-triangle" style="font-size: 3rem; opacity: 0.5;"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-xl-3">
+                                <div class="card text-white bg-info">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <h6 class="card-title">Modificări Recente</h6>
+                                                <h2 class="mb-0">12</h2>
+                                                <small>Ultimele 7 zile</small>
+                                            </div>
+                                            <div>
+                                                <i class="bi bi-pencil-square" style="font-size: 3rem; opacity: 0.5;"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Recent Price Changes -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Modificări Recente de Preț</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Produs</th>
+                                                <th>Preț Vechi</th>
+                                                <th>Preț Nou</th>
+                                                <th>Modificat de</th>
+                                                <th>Data</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Dulceață de Căpșuni de Argeș</td>
+                                                <td>16.99 RON</td>
+                                                <td>18.99 RON</td>
+                                                <td>Elena Ionescu</td>
+                                                <td>12.05.2024</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Brânză de Burduf</td>
+                                                <td>30.00 RON</td>
+                                                <td>32.00 RON</td>
+                                                <td>Elena Ionescu</td>
+                                                <td>11.05.2024</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Miere de Salcâm Transilvania</td>
+                                                <td>25.50 RON</td>
+                                                <td>28.50 RON</td>
+                                                <td>Elena Ionescu</td>
+                                                <td>10.05.2024</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Active Offers -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Oferte Active</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Ofertă</th>
+                                                <th>Tip</th>
+                                                <th>Valoare</th>
+                                                <th>Data Început</th>
+                                                <th>Data Sfârșit</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Reducere de Primăvară</td>
+                                                <td>Reducere procentuală</td>
+                                                <td>15%</td>
+                                                <td>01.05.2024</td>
+                                                <td>31.05.2024</td>
+                                                <td><span class="badge bg-success">Activă</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Transport Gratuit</td>
+                                                <td>Transport gratuit</td>
+                                                <td>Comenzi peste 75 RON</td>
+                                                <td>10.05.2024</td>
+                                                <td>20.05.2024</td>
+                                                <td><span class="badge bg-success">Activă</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Pachet 3 Dulcețuri</td>
+                                                <td>Pachet special</td>
+                                                <td>40% reducere</td>
+                                                <td>05.05.2024</td>
+                                                <td>15.05.2024</td>
+                                                <td><span class="badge bg-warning text-dark">Expiră curând</span></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Products/Prices Tab -->
+                    <div class="tab-pane fade" id="products">
+                        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+                            <h1 class="h2">Gestionare Prețuri Produse</h1>
+                            <div class="btn-group">
+                                <button class="btn btn-outline-secondary">
+                                    <i class="bi bi-file-earmark-excel me-1"></i>Export Excel
+                                </button>
+                                <button class="btn btn-outline-secondary">
+                                    <i class="bi bi-printer me-1"></i>Print
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Products Filter -->
+                        <div class="card mb-4">
+                            <div class="card-header bg-light">
+                                <div class="row g-2 align-items-center">
+                                    <div class="col-md-6">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" placeholder="Caută produse...">
+                                            <button class="btn btn-outline-secondary" type="button">
+                                                <i class="bi bi-search"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 d-flex justify-content-md-end">
+                                        <select class="form-select w-auto">
+                                            <option selected>Toate categoriile</option>
+                                            <option>Dulcețuri & Miere</option>
+                                            <option>Conserve & Murături</option>
+                                            <option>Mezeluri</option>
+                                            <option>Brânzeturi</option>
+                                            <option>Băuturi</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Products Table -->
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>Produs</th>
+                                                <th>Categorie</th>
+                                                <th>Preț Actual</th>
+                                                <th>Preț Nou</th>
+                                                <th>Acțiuni</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>1</td>
+                                                <td>Dulceață de Căpșuni de Argeș</td>
+                                                <td>Dulcețuri & Miere</td>
+                                                <td>18.99 RON</td>
+                                                <td>
+                                                    <input type="number" class="form-control form-control-sm" value="18.99" step="0.01">
+                                                </td>
+                                                <td>
+                                                    <button class="btn btn-primary btn-sm">
+                                                        <i class="bi bi-save"></i> Salvează
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>2</td>
+                                                <td>Zacuscă de Buzău</td>
+                                                <td>Conserve & Murături</td>
+                                                <td>15.50 RON</td>
+                                                <td>
+                                                    <input type="number" class="form-control form-control-sm" value="15.50" step="0.01">
+                                                </td>
+                                                <td>
+                                                    <button class="btn btn-primary btn-sm">
+                                                        <i class="bi bi-save"></i> Salvează
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>3</td>
+                                                <td>Brânză de Burduf</td>
+                                                <td>Brânzeturi</td>
+                                                <td>32.00 RON</td>
+                                                <td>
+                                                    <input type="number" class="form-control form-control-sm" value="32.00" step="0.01">
+                                                </td>
+                                                <td>
+                                                    <button class="btn btn-primary btn-sm">
+                                                        <i class="bi bi-save"></i> Salvează
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>4</td>
+                                                <td>Țuică de Prune Hunedoara</td>
+                                                <td>Băuturi</td>
+                                                <td>45.00 RON</td>
+                                                <td>
+                                                    <input type="number" class="form-control form-control-sm" value="45.00" step="0.01">
+                                                </td>
+                                                <td>
+                                                    <button class="btn btn-primary btn-sm">
+                                                        <i class="bi bi-save"></i> Salvează
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>5</td>
+                                                <td>Miere de Salcâm Transilvania</td>
+                                                <td>Dulcețuri & Miere</td>
+                                                <td>28.50 RON</td>
+                                                <td>
+                                                    <input type="number" class="form-control form-control-sm" value="28.50" step="0.01">
+                                                </td>
+                                                <td>
+                                                    <button class="btn btn-primary btn-sm">
+                                                        <i class="bi bi-save"></i> Salvează
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                
+                                <!-- Pagination -->
+                                <nav aria-label="Page navigation">
+                                    <ul class="pagination justify-content-center">
+                                        <li class="page-item disabled">
+                                            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Anterior</a>
+                                        </li>
+                                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                        <li class="page-item">
+                                            <a class="page-link" href="#">Următor</a>
+                                        </li>
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Offers Tab -->
+                    <div class="tab-pane fade" id="offers">
+                        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+                            <h1 class="h2">Gestionare Oferte & Promoții</h1>
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addOfferModal">
+                                <i class="bi bi-plus-lg me-1"></i>Adaugă Ofertă Nouă
+                            </button>
+                        </div>
+
+                        <!-- Active Offers -->
+                        <div class="card mb-4">
+                            <div class="card-header bg-light">
+                                <h5 class="mb-0">Oferte Active</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>Nume Ofertă</th>
+                                                <th>Tip</th>
+                                                <th>Valoare</th>
+                                                <th>Data Început</th>
+                                                <th>Data Sfârșit</th>
+                                                <th>Status</th>
+                                                <th>Acțiuni</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>1</td>
+                                                <td>Reducere de Primăvară</td>
+                                                <td>Reducere procentuală</td>
+                                                <td>15%</td>
+                                                <td>01.05.2024</td>
+                                                <td>31.05.2024</td>
+                                                <td><span class="badge bg-success">Activă</span></td>
+                                                <td>
+                                                    <div class="btn-group btn-group-sm">
+                                                        <button class="btn btn-outline-primary">
+                                                            <i class="bi bi-eye"></i>
+                                                        </button>
+                                                        <button class="btn btn-outline-secondary">
+                                                            <i class="bi bi-pencil"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>2</td>
+                                                <td>Transport Gratuit</td>
+                                                <td>Transport gratuit</td>
+                                                <td>Comenzi peste 75 RON</td>
+                                                <td>10.05.2024</td>
+                                                <td>20.05.2024</td>
+                                                <td><span class="badge bg-success">Activă</span></td>
+                                                <td>
+                                                    <div class="btn-group btn-group-sm">
+                                                        <button class="btn btn-outline-primary">
+                                                            <i class="bi bi-eye"></i>
+                                                        </button>
+                                                        <button class="btn btn-outline-secondary">
+                                                            <i class="bi bi-pencil"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>3</td>
+                                                <td>Pachet 3 Dulcețuri</td>
+                                                <td>Pachet special</td>
+                                                <td>40% reducere</td>
+                                                <td>05.05.2024</td>
+                                                <td>15.05.2024</td>
+                                                <td><span class="badge bg-warning text-dark">Expiră curând</span></td>
+                                                <td>
+                                                    <div class="btn-group btn-group-sm">
+                                                        <button class="btn btn-outline-primary">
+                                                            <i class="bi bi-eye"></i>
+                                                        </button>
+                                                        <button class="btn btn-outline-secondary">
+                                                            <i class="bi bi-pencil"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Upcoming Offers -->
+                        <div class="card mb-4">
+                            <div class="card-header bg-light">
+                                <h5 class="mb-0">Oferte Viitoare</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>Nume Ofertă</th>
+                                                <th>Tip</th>
+                                                <th>Valoare</th>
+                                                <th>Data Început</th>
+                                                <th>Data Sfârșit</th>
+                                                <th>Status</th>
+                                                <th>Acțiuni</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>4</td>
+                                                <td>Reducere de Vară</td>
+                                                <td>Reducere procentuală</td>
+                                                <td>20%</td>
+                                                <td>01.06.2024</td>
+                                                <td>30.06.2024</td>
+                                                <td><span class="badge bg-secondary">Programată</span></td>
+                                                <td>
+                                                    <div class="btn-group btn-group-sm">
+                                                        <button class="btn btn-outline-primary">
+                                                            <i class="bi bi-eye"></i>
+                                                        </button>
+                                                        <button class="btn btn-outline-secondary">
+                                                            <i class="bi bi-pencil"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>5</td>
+                                                <td>Pachet Cadou</td>
+                                                <td>Pachet special</td>
+                                                <td>25% reducere</td>
+                                                <td>15.06.2024</td>
+                                                <td>30.06.2024</td>
+                                                <td><span class="badge bg-secondary">Programată</span></td>
+                                                <td>
+                                                    <div class="btn-group btn-group-sm">
+                                                        <button class="btn btn-outline-primary">
+                                                            <i class="bi bi-eye"></i>
+                                                        </button>
+                                                        <button class="btn btn-outline-secondary">
+                                                            <i class="bi bi-pencil"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Past Offers -->
+                        <div class="card">
+                            <div class="card-header bg-light">
+                                <h5 class="mb-0">Oferte Expirate</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>Nume Ofertă</th>
+                                                <th>Tip</th>
+                                                <th>Valoare</th>
+                                                <th>Data Început</th>
+                                                <th>Data Sfârșit</th>
+                                                <th>Status</th>
+                                                <th>Acțiuni</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>6</td>
+                                                <td>Reducere de Primăvară</td>
+                                                <td>Reducere procentuală</td>
+                                                <td>10%</td>
+                                                <td>01.03.2024</td>
+                                                <td>31.03.2024</td>
+                                                <td><span class="badge bg-dark">Expirată</span></td>
+                                                <td>
+                                                    <div class="btn-group btn-group-sm">
+                                                        <button class="btn btn-outline-primary">
+                                                            <i class="bi bi-eye"></i>
+                                                        </button>
+                                                        <button class="btn btn-outline-secondary">
+                                                            <i class="bi bi-arrow-repeat"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>7</td>
+                                                <td>Pachet Paște</td>
+                                                <td>Pachet special</td>
+                                                <td>30% reducere</td>
+                                                <td>01.04.2024</td>
+                                                <td>15.04.2024</td>
+                                                <td><span class="badge bg-dark">Expirată</span></td>
+                                                <td>
+                                                    <div class="btn-group btn-group-sm">
+                                                        <button class="btn btn-outline-primary">
+                                                            <i class="bi bi-eye"></i>
+                                                        </button>
+                                                        <button class="btn btn-outline-secondary">
+                                                            <i class="bi bi-arrow-repeat"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Profile Tab -->
+                    <div class="tab-pane fade" id="profile">
+                        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+                            <h1 class="h2">Profilul Meu</h1>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4 mb-4">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <div class="mb-3">
+                                            <img src="https://via.placeholder.com/150/8B0000/FFFFFF?text=Employee" class="rounded-circle img-thumbnail" alt="Employee Profile">
+                                        </div>
+                                        <h5 class="card-title" id="profile-name">Elena Ionescu</h5>
+                                        <p class="card-text text-muted" id="profile-email">employee@example.com</p>
+                                        <p><span class="badge bg-warning text-dark">Angajat</span></p>
+                                        <button class="btn btn-outline-primary btn-sm">
+                                            <i class="bi bi-camera me-1"></i>Schimbă Fotografia
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-8">
+                                <div class="card">
+                                    <div class="card-header bg-light">
+                                        <h5 class="mb-0">Editare Profil</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <form id="employeeProfileForm">
+                                            <div class="row g-3">
+                                                <div class="col-md-6">
+                                                    <label for="employeeFirstName" class="form-label">Prenume</label>
+                                                    <input type="text" class="form-control" id="employeeFirstName" value="Elena">
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label for="employeeLastName" class="form-label">Nume</label>
+                                                    <input type="text" class="form-control" id="employeeLastName" value="Ionescu">
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label for="employeeEmail" class="form-label">Email</label>
+                                                    <input type="email" class="form-control" id="employeeEmail" value="employee@example.com" readonly>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label for="employeePhone" class="form-label">Telefon</label>
+                                                    <input type="tel" class="form-control" id="employeePhone" value="+40723456789">
+                                                </div>
+                                                <div class="col-12">
+                                                    <hr>
+                                                    <h6>Schimbă Parola</h6>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label for="employeeCurrentPassword" class="form-label">Parola Actuală</label>
+                                                    <input type="password" class="form-control" id="employeeCurrentPassword">
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label for="employeeNewPassword" class="form-label">Parola Nouă</label>
+                                                    <input type="password" class="form-control" id="employeeNewPassword">
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label for="employeeConfirmPassword" class="form-label">Confirmă Parola</label>
+                                                    <input type="password" class="form-control" id="employeeConfirmPassword">
+                                                </div>
+                                                <div class="col-12 mt-3">
+                                                    <button type="button" class="btn btn-primary" onclick="updateEmployeeProfile()">
+                                                        <i class="bi bi-save me-1"></i>Salvează Modificările
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Add Offer Modal -->
+    <div class="modal fade" id="addOfferModal" tabindex="-1" aria-labelledby="addOfferModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addOfferModalLabel">Adaugă Ofertă Nouă</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addOfferForm">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="offerName" class="form-label">Nume Ofertă *</label>
+                                <input type="text" class="form-control" id="offerName" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="offerType" class="form-label">Tip Ofertă *</label>
+                                <select class="form-select" id="offerType" required>
+                                    <option value="">Selectează tipul</option>
+                                    <option value="percentage">Reducere procentuală</option>
+                                    <option value="fixed">Reducere fixă</option>
+                                    <option value="free_shipping">Transport gratuit</option>
+                                    <option value="bundle">Pachet special</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="offerValue" class="form-label">Valoare *</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="offerValue" required>
+                                    <span class="input-group-text">%</span>
+                                </div>
+                                <div class="form-text">Pentru reduceri procentuale, introduceți valoarea fără simbolul %</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="offerMinOrder" class="form-label">Valoare Minimă Comandă</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="offerMinOrder">
+                                    <span class="input-group-text">RON</span>
+                                </div>
+                                <div class="form-text">Lăsați gol dacă nu există o valoare minimă</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="offerStartDate" class="form-label">Data Început *</label>
+                                <input type="date" class="form-control" id="offerStartDate" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="offerEndDate" class="form-label">Data Sfârșit *</label>
+                                <input type="date" class="form-control" id="offerEndDate" required>
+                            </div>
+                            <div class="col-12">
+                                <label for="offerDescription" class="form-label">Descriere</label>
+                                <textarea class="form-control" id="offerDescription" rows="3"></textarea>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Aplicabilitate</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="offerApplicability" id="offerAllProducts" value="all" checked>
+                                    <label class="form-check-label" for="offerAllProducts">
+                                        Toate produsele
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="offerApplicability" id="offerCategory" value="category">
+                                    <label class="form-check-label" for="offerCategory">
+                                        Categorie specifică
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="offerApplicability" id="offerSpecificProducts" value="products">
+                                    <label class="form-check-label" for="offerSpecificProducts">
+                                        Produse specifice
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="offerActive" checked>
+                                    <label class="form-check-label" for="offerActive">
+                                        Ofertă Activă
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anulează</button>
+                    <button type="button" class="btn btn-primary" onclick="addOffer()">Adaugă Ofertă</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5.3 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="auth.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if user is logged in and has employee role
+            const userData = getUserData();
+            if (!userData.loggedIn || userData.role !== 'employee') {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // Update employee name
+            document.getElementById('employee-name').textContent = userData.name;
+            document.getElementById('profile-name').textContent = userData.name;
+            document.getElementById('profile-email').textContent = userData.email;
+            
+            // Fill employee profile form
+            document.getElementById('employeeFirstName').value = userData.name.split(' ')[0] || '';
+            document.getElementById('employeeLastName').value = userData.name.split(' ')[1] || '';
+            document.getElementById('employeeEmail').value = userData.email || '';
+            document.getElementById('employeePhone').value = userData.phone || '';
+            
+            // Handle tab navigation from URL hash
+            if (window.location.hash) {
+                const targetTab = document.querySelector(`a[href="${window.location.hash}"]`);
+                if (targetTab) {
+                    const tab = new bootstrap.Tab(targetTab);
+                    tab.show();
+                }
+            }
+        });
+        
+        // Update employee profile
+        function updateEmployeeProfile() {
+            const firstName = document.getElementById('employeeFirstName').value;
+            const lastName = document.getElementById('employeeLastName').value;
+            const phone = document.getElementById('employeePhone').value;
+            
+            // Get current user data
+            const userData = getUserData();
+            
+            // Update user data
+            userData.name = `${firstName} ${lastName}`;
+            userData.phone = phone;
+            
+            // Save updated data
+            localStorage.setItem('userData', JSON.stringify(userData));
+            
+            // Update display
+            document.getElementById('employee-name').textContent = userData.name;
+            document.getElementById('profile-name').textContent = userData.name;
+            
+            // Show success message
+            alert('Profilul a fost actualizat cu succes!');
+        }
+        
+        // Add offer function (mock)
+        function addOffer() {
+            alert('Oferta a fost adăugată cu succes!');
+            const modal = bootstrap.Modal.getInstance(document.getElementById('addOfferModal'));
+            modal.hide();
+        }
+    </script>
+</body>
+</html>
