@@ -80,7 +80,7 @@ if ($adresa_livrare_id == 0) {
         echo json_encode($response);
         exit;
     } else {
-        header("Location: cart.html");
+        header("Location: checkout.php");
         exit;
     }
 }
@@ -93,7 +93,7 @@ if (!in_array($metoda_plata, ['card', 'transfer', 'ramburs'])) {
         echo json_encode($response);
         exit;
     } else {
-        header("Location: cart.html");
+        header("Location: checkout.php");
         exit;
     }
 }
@@ -195,7 +195,7 @@ try {
                     echo json_encode($response);
                     exit;
                 } else {
-                    header("Location: cart.html");
+                    header("Location: checkout.php");
                     exit;
                 }
             }
@@ -207,7 +207,7 @@ try {
                 echo json_encode($response);
                 exit;
             } else {
-                header("Location: cart.html");
+                header("Location: checkout.php");
                 exit;
             }
         }
@@ -253,7 +253,7 @@ try {
                     echo json_encode($response);
                     exit;
                 } else {
-                    header("Location: cart.html");
+                    header("Location: checkout.php");
                     exit;
                 }
             }
@@ -360,9 +360,16 @@ if ($is_ajax) {
 
 // Redirect for regular requests
 if ($response['success']) {
-    header("Location: client-dashboard.html#order-history");
+    // Set a session variable to indicate successful order placement
+    $_SESSION['order_placed'] = true;
+    $_SESSION['order_number'] = $response['order_number'];
+    
+    // Redirect to success page
+    header("Location: order-success.php?order=" . $response['order_number']);
 } else {
-    header("Location: cart.html");
+    // Redirect back to checkout with error
+    $_SESSION['checkout_error'] = $response['message'];
+    header("Location: checkout.php");
 }
 exit;
 ?>

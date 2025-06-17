@@ -11,6 +11,9 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="assistant-bot.css">
+    
+    <!-- Confetti JS for celebration effect -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
 </head>
 <body>
     <!-- Navigation -->
@@ -235,53 +238,14 @@
         document.addEventListener('DOMContentLoaded', function() {
             loadCartItems();
             updateShippingProgress();
-        });
-
-        // Free Shipping Progress Bar Functions
-        function updateShippingProgress() {
-            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            const container = document.getElementById('shipping-progress-container');
             
-            if (subtotal >= FREE_SHIPPING_THRESHOLD) {
-                // Free shipping achieved
-                container.innerHTML = `
-                    <div class="alert alert-success mb-0 d-flex align-items-center">
-                        <i class="bi bi-truck me-2 fs-5"></i>
-                        <div class="flex-grow-1">
-                            <strong>Felicitări! Ai livrare gratuită! 🚚</strong>
-                            <div class="progress mt-2" style="height: 8px;">
-                                <div class="progress-bar bg-success" role="progressbar" style="width: 100%"></div>
-                            </div>
-                        </div>
-                    </div>
-                `;
+            // Reset celebration flag when visiting cart page
+            if (localStorage.getItem('cartSubtotal') >= FREE_SHIPPING_THRESHOLD) {
+                localStorage.setItem('freeShippingCelebrated', 'true');
             } else {
-                // Calculate remaining amount
-                const remaining = FREE_SHIPPING_THRESHOLD - subtotal;
-                const progressPercentage = Math.min((subtotal / FREE_SHIPPING_THRESHOLD) * 100, 100);
-                
-                container.innerHTML = `
-                    <div class="alert alert-info mb-0 d-flex align-items-center">
-                        <i class="bi bi-truck me-2 fs-5"></i>
-                        <div class="flex-grow-1">
-                            <strong>Adaugă produse de încă ${remaining.toFixed(2)} RON pentru livrare gratuită!</strong>
-                            <div class="progress mt-2" style="height: 8px;">
-                                <div class="progress-bar bg-primary progress-bar-striped progress-bar-animated" 
-                                     role="progressbar" 
-                                     style="width: ${progressPercentage}%"
-                                     aria-valuenow="${progressPercentage}" 
-                                     aria-valuemin="0" 
-                                     aria-valuemax="100">
-                                </div>
-                            </div>
-                            <small class="text-muted">
-                                ${subtotal.toFixed(2)} RON / ${FREE_SHIPPING_THRESHOLD} RON
-                            </small>
-                        </div>
-                    </div>
-                `;
+                localStorage.setItem('freeShippingCelebrated', 'false');
             }
-        }
+        });
 
         // Voucher functions
         function getVouchers() {
@@ -344,6 +308,9 @@
             appliedVoucher = voucher;
             showVoucherMessage(`Voucher aplicat cu succes! Reducere de ${voucher.discount}%`, 'success');
             
+            // Store voucher in session for PHP processing
+            sessionStorage.setItem('appliedVoucher', JSON.stringify(voucher));
+            
             // Disable input and button
             document.getElementById('voucherCode').disabled = true;
             document.querySelector('button[onclick="applyVoucher()"]').disabled = true;
@@ -355,6 +322,7 @@
 
         function removeVoucher() {
             appliedVoucher = null;
+            sessionStorage.removeItem('appliedVoucher');
             document.getElementById('voucherCode').disabled = false;
             document.getElementById('voucherCode').value = '';
             document.querySelector('button[onclick="applyVoucher()"]').disabled = false;
@@ -408,47 +376,6 @@
 
         // Override the main.js updateCartTotal function for this page
         window.updateCartTotal = updateCartTotal;
-
-        // Proceed to checkout function
-        function proceedToCheckout() {
-            if (cart.length === 0) {
-                alert('Coșul este gol. Adăugați produse pentru a continua.');
-                return;
-            }
-            
-            // Check if user is logged in
-            if (!isUserLoggedIn()) {
-                // Store current page as redirect after login
-                localStorage.setItem('redirectAfterLogin', 'cart.html');
-                showNotification('Pentru a finaliza comanda, trebuie să te autentifici.', 'warning');
-                setTimeout(() => {
-                    window.location.href = 'login.html';
-                }, 2000);
-                return;
-            }
-            
-            // Mark voucher as used if applied
-            if (appliedVoucher) {
-                markVoucherAsUsed(appliedVoucher.code);
-            }
-            
-            // In a real application, this would redirect to a payment processor
-            const total = document.getElementById('total').textContent;
-            let message = `Comanda ta în valoare de ${total} a fost plasată cu succes!`;
-            
-            if (appliedVoucher) {
-                message += ` Ai economisit ${appliedVoucher.discount}% cu voucherul ${appliedVoucher.code}.`;
-            }
-            
-            alert(message);
-            
-            // Clear cart and voucher
-            cart = [];
-            appliedVoucher = null;
-            localStorage.setItem('cart', JSON.stringify(cart));
-            updateCartCount();
-            loadCartItems();
-        }
     </script>
 </body>
 </html>

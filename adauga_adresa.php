@@ -25,7 +25,7 @@ if (!isset($_SESSION['user_id'])) {
     }
     
     // For regular requests, redirect to login
-    $_SESSION['redirect_url'] = 'client-dashboard.html#addresses';
+    $_SESSION['redirect_url'] = 'checkout.php';
     header("Location: login.php");
     exit;
 }
@@ -38,20 +38,20 @@ if ($_SERVER["REQUEST_METHOD"] != "POST") {
         echo json_encode($response);
         exit;
     } else {
-        header("Location: client-dashboard.html#addresses");
+        header("Location: checkout.php");
         exit;
     }
 }
 
 // Get user ID and form data
 $user_id = $_SESSION['user_id'];
-$nume_adresa = isset($_POST['name']) ? sanitize_input($_POST['name']) : '';
+$nume_adresa = isset($_POST['address_name']) ? sanitize_input($_POST['address_name']) : '';
 $adresa = sanitize_input($_POST['address']);
 $oras = sanitize_input($_POST['city']);
 $judet = sanitize_input($_POST['county']);
 $cod_postal = sanitize_input($_POST['postal_code']);
 $telefon = isset($_POST['phone']) ? sanitize_input($_POST['phone']) : '';
-$implicit = isset($_POST['default']) && $_POST['default'] == '1' ? 1 : 0;
+$implicit = isset($_POST['default_address']) && $_POST['default_address'] == '1' ? 1 : 0;
 
 // Validate input
 if (empty($adresa) || empty($oras) || empty($judet) || empty($cod_postal)) {
@@ -61,7 +61,7 @@ if (empty($adresa) || empty($oras) || empty($judet) || empty($cod_postal)) {
         echo json_encode($response);
         exit;
     } else {
-        header("Location: client-dashboard.html#addresses");
+        header("Location: checkout.php");
         exit;
     }
 }
@@ -97,20 +97,26 @@ try {
     $response['message'] = 'Adresa a fost adăugată cu succes.';
     $response['address_id'] = $address_id;
     
+    // Redirect to checkout page for regular requests
+    if (!$is_ajax) {
+        header("Location: checkout.php");
+        exit;
+    }
+    
 } catch (Exception $e) {
     // Rollback transaction on error
     mysqli_rollback($conn);
     
     $response['message'] = 'A apărut o eroare: ' . $e->getMessage();
+    
+    // Redirect to checkout page for regular requests
+    if (!$is_ajax) {
+        header("Location: checkout.php");
+        exit;
+    }
 }
 
 // Return response for AJAX requests
-if ($is_ajax) {
-    echo json_encode($response);
-    exit;
-}
-
-// Redirect for regular requests
-header("Location: client-dashboard.html#addresses");
+echo json_encode($response);
 exit;
 ?>

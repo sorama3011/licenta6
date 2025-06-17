@@ -240,7 +240,11 @@ function addToCart(id, name, price, image, weight) {
     
     localStorage.setItem('cart', JSON.stringify(cart));
     updateCartCount();
+    updateCartSubtotal(); // Update subtotal for free shipping progress
     showAddToCartNotification(name);
+    
+    // Check if we've reached free shipping threshold
+    checkFreeShippingThreshold();
 }
 
 // Update cart count in navigation
@@ -255,6 +259,46 @@ function updateCartCount() {
         } else {
             cartCount.style.display = 'none';
         }
+    }
+}
+
+// Update cart subtotal and store in localStorage
+function updateCartSubtotal() {
+    const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    localStorage.setItem('cartSubtotal', subtotal.toString());
+    return subtotal;
+}
+
+// Check if we've reached free shipping threshold
+function checkFreeShippingThreshold() {
+    const FREE_SHIPPING_THRESHOLD = 150;
+    const subtotal = updateCartSubtotal();
+    
+    // If we just crossed the threshold, trigger celebration
+    if (subtotal >= FREE_SHIPPING_THRESHOLD && 
+        (localStorage.getItem('freeShippingCelebrated') !== 'true' || 
+         parseFloat(localStorage.getItem('previousSubtotal') || '0') < FREE_SHIPPING_THRESHOLD)) {
+        
+        celebrateFreeShipping();
+        localStorage.setItem('freeShippingCelebrated', 'true');
+    }
+    
+    // Store previous subtotal to check if we crossed the threshold
+    localStorage.setItem('previousSubtotal', subtotal.toString());
+}
+
+// Celebrate free shipping with confetti
+function celebrateFreeShipping() {
+    // Check if confetti library is available
+    if (typeof confetti === 'function') {
+        confetti({
+            particleCount: 100,
+            spread: 70,
+            origin: { y: 0.6 }
+        });
+        
+        // Show notification
+        showNotification('Felicitări! Ai obținut transport GRATUIT! 🚚', 'success');
     }
 }
 
@@ -284,6 +328,7 @@ function removeFromCart(id) {
     cart = cart.filter(item => item.id !== id);
     localStorage.setItem('cart', JSON.stringify(cart));
     updateCartCount();
+    updateCartSubtotal();
     
     // Reload cart page if we're on it
     if (window.location.pathname.includes('cart.html')) {
@@ -301,10 +346,12 @@ function updateCartQuantity(id, quantity) {
         } else {
             localStorage.setItem('cart', JSON.stringify(cart));
             updateCartCount();
+            updateCartSubtotal();
             
             // Update cart total if we're on cart page
             if (window.location.pathname.includes('cart.html')) {
                 updateCartTotal();
+                updateShippingProgress();
             }
         }
     }
@@ -362,17 +409,76 @@ function loadCartItems() {
     });
     
     updateCartTotal();
+    updateShippingProgress();
 }
 
 // Update cart total
 function updateCartTotal() {
     const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    const shipping = subtotal > 100 ? 0 : 15; // Free shipping over 100 RON
+    const shipping = subtotal > 150 ? 0 : 15; // Free shipping over 150 RON
     const total = subtotal + shipping;
     
     document.getElementById('subtotal').textContent = `${subtotal.toFixed(2)} RON`;
     document.getElementById('shipping').textContent = shipping === 0 ? 'Gratuit' : `${shipping.toFixed(2)} RON`;
     document.getElementById('total').textContent = `${total.toFixed(2)} RON`;
+}
+
+// Free Shipping Progress Bar Functions
+function updateShippingProgress() {
+    const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const container = document.getElementById('shipping-progress-container');
+    const FREE_SHIPPING_THRESHOLD = 150; // RON
+    
+    if (!container) return;
+    
+    if (subtotal >= FREE_SHIPPING_THRESHOLD) {
+        // Free shipping achieved
+        container.innerHTML = `
+            <div class="alert alert-success mb-0 d-flex align-items-center">
+                <i class="bi bi-truck me-2 fs-5"></i>
+                <div class="flex-grow-1">
+                    <strong>Felicitări! Ai livrare gratuită! 🚚</strong>
+                    <div class="progress mt-2" style="height: 8px;">
+                        <div class="progress-bar bg-success" role="progressbar" style="width: 100%"></div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // Check if we should celebrate (only if we just crossed the threshold)
+        if (localStorage.getItem('freeShippingCelebrated') !== 'true') {
+            celebrateFreeShipping();
+            localStorage.setItem('freeShippingCelebrated', 'true');
+        }
+    } else {
+        // Calculate remaining amount
+        const remaining = FREE_SHIPPING_THRESHOLD - subtotal;
+        const progressPercentage = Math.min((subtotal / FREE_SHIPPING_THRESHOLD) * 100, 100);
+        
+        container.innerHTML = `
+            <div class="alert alert-info mb-0 d-flex align-items-center">
+                <i class="bi bi-truck me-2 fs-5"></i>
+                <div class="flex-grow-1">
+                    <strong>Adaugă produse de încă ${remaining.toFixed(2)} RON pentru livrare gratuită!</strong>
+                    <div class="progress mt-2" style="height: 8px;">
+                        <div class="progress-bar bg-primary progress-bar-striped progress-bar-animated" 
+                             role="progressbar" 
+                             style="width: ${progressPercentage}%"
+                             aria-valuenow="${progressPercentage}" 
+                             aria-valuemin="0" 
+                             aria-valuemax="100">
+                        </div>
+                    </div>
+                    <small class="text-muted">
+                        ${subtotal.toFixed(2)} RON / ${FREE_SHIPPING_THRESHOLD} RON
+                    </small>
+                </div>
+            </div>
+        `;
+        
+        // Reset celebration flag if we're below threshold
+        localStorage.setItem('freeShippingCelebrated', 'false');
+    }
 }
 
 // Add back to top button
@@ -470,3 +576,25 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+// Proceed to checkout function
+function proceedToCheckout() {
+    if (cart.length === 0) {
+        alert('Coșul este gol. Adăugați produse pentru a continua.');
+        return;
+    }
+    
+    // Check if user is logged in
+    if (!isUserLoggedIn()) {
+        // Store current page as redirect after login
+        localStorage.setItem('redirectAfterLogin', 'checkout.php');
+        showNotification('Pentru a finaliza comanda, trebuie să te autentifici.', 'warning');
+        setTimeout(() => {
+            window.location.href = 'login.php';
+        }, 2000);
+        return;
+    }
+    
+    // Redirect to checkout page
+    window.location.href = 'checkout.php';
+}
