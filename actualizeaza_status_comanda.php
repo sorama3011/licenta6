@@ -118,6 +118,6 @@ if ($is_ajax) {
 }
 
 // Redirect for regular requests
-header("Location: admin-dashboard.html");
+header("Location: detalii-comanda.php?id=$order_id");
 exit;
 ?>
