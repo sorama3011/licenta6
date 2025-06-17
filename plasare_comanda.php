@@ -26,7 +26,7 @@ if (!isset($_SESSION['user_id'])) {
     }
     
     // For regular requests, redirect to login
-    $_SESSION['redirect_url'] = 'cart.html';
+    $_SESSION['redirect_url'] = 'checkout.php';
     header("Location: login.php");
     exit;
 }
@@ -39,7 +39,7 @@ if ($_SERVER["REQUEST_METHOD"] != "POST") {
         echo json_encode($response);
         exit;
     } else {
-        header("Location: cart.html");
+        header("Location: checkout.php");
         exit;
     }
 }
@@ -59,7 +59,7 @@ if ($cart_check_row['count'] == 0) {
         echo json_encode($response);
         exit;
     } else {
-        header("Location: cart.html");
+        header("Location: checkout.php");
         exit;
     }
 }
@@ -142,7 +142,7 @@ try {
             echo json_encode($response);
             exit;
         } else {
-            header("Location: cart.html");
+            header("Location: checkout.php");
             exit;
         }
     }
