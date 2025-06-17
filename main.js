@@ -431,6 +431,9 @@ function updateShippingProgress() {
     
     if (!container) return;
     
+    // Store subtotal in localStorage for progress tracking
+    localStorage.setItem('cartSubtotal', subtotal.toString());
+    
     if (subtotal >= FREE_SHIPPING_THRESHOLD) {
         // Free shipping achieved
         container.innerHTML = `

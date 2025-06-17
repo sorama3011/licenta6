@@ -376,6 +376,101 @@
 
         // Override the main.js updateCartTotal function for this page
         window.updateCartTotal = updateCartTotal;
+
+        // Free Shipping Progress Bar Functions
+        function updateShippingProgress() {
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const container = document.getElementById('shipping-progress-container');
+            
+            // Store subtotal in localStorage for progress tracking
+            localStorage.setItem('cartSubtotal', subtotal.toString());
+            
+            if (subtotal >= FREE_SHIPPING_THRESHOLD) {
+                // Free shipping achieved
+                container.innerHTML = `
+                    <div class="alert alert-success mb-0 d-flex align-items-center">
+                        <i class="bi bi-truck me-2 fs-5"></i>
+                        <div class="flex-grow-1">
+                            <strong>Felicitări! Ai livrare gratuită! 🚚</strong>
+                            <div class="progress mt-2" style="height: 8px;">
+                                <div class="progress-bar bg-success" role="progressbar" style="width: 100%"></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                // Check if we should celebrate (only if we just crossed the threshold)
+                if (localStorage.getItem('freeShippingCelebrated') !== 'true') {
+                    celebrateFreeShipping();
+                    localStorage.setItem('freeShippingCelebrated', 'true');
+                }
+            } else {
+                // Calculate remaining amount
+                const remaining = FREE_SHIPPING_THRESHOLD - subtotal;
+                const progressPercentage = Math.min((subtotal / FREE_SHIPPING_THRESHOLD) * 100, 100);
+                
+                container.innerHTML = `
+                    <div class="alert alert-info mb-0 d-flex align-items-center">
+                        <i class="bi bi-truck me-2 fs-5"></i>
+                        <div class="flex-grow-1">
+                            <strong>Adaugă produse de încă ${remaining.toFixed(2)} RON pentru livrare gratuită!</strong>
+                            <div class="progress mt-2" style="height: 8px;">
+                                <div class="progress-bar bg-primary progress-bar-striped progress-bar-animated" 
+                                     role="progressbar" 
+                                     style="width: ${progressPercentage}%"
+                                     aria-valuenow="${progressPercentage}" 
+                                     aria-valuemin="0" 
+                                     aria-valuemax="100">
+                                </div>
+                            </div>
+                            <small class="text-muted">
+                                ${subtotal.toFixed(2)} RON / ${FREE_SHIPPING_THRESHOLD} RON
+                            </small>
+                        </div>
+                    </div>
+                `;
+                
+                // Reset celebration flag if we're below threshold
+                localStorage.setItem('freeShippingCelebrated', 'false');
+            }
+        }
+
+        // Celebrate free shipping with confetti
+        function celebrateFreeShipping() {
+            // Check if confetti library is available
+            if (typeof confetti === 'function') {
+                confetti({
+                    particleCount: 100,
+                    spread: 70,
+                    origin: { y: 0.6 }
+                });
+                
+                // Show notification
+                showNotification('Felicitări! Ai obținut transport GRATUIT! 🚚', 'success');
+            }
+        }
+
+        // Proceed to checkout function
+        function proceedToCheckout() {
+            if (cart.length === 0) {
+                alert('Coșul este gol. Adăugați produse pentru a continua.');
+                return;
+            }
+            
+            // Check if user is logged in
+            if (!isUserLoggedIn()) {
+                // Store current page as redirect after login
+                localStorage.setItem('redirectAfterLogin', 'checkout.php');
+                showNotification('Pentru a finaliza comanda, trebuie să te autentifici.', 'warning');
+                setTimeout(() => {
+                    window.location.href = 'login.php';
+                }, 2000);
+                return;
+            }
+            
+            // Redirect to checkout page
+            window.location.href = 'checkout.php';
+        }
     </script>
 </body>
 </html>

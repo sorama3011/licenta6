@@ -280,6 +280,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
                     <?php endif; ?>
                     
+                    <?php if ($points_earned > 0): ?>
+                    <div class="alert alert-success mt-4 mx-auto" style="max-width: 500px;">
+                        <h5><i class="bi bi-star-fill me-2"></i>Ai câștigat puncte de fidelitate!</h5>
+                        <p class="mb-0">Pentru această comandă ai primit <strong><?php echo $points_earned; ?> puncte</strong> de fidelitate care vor fi adăugate în contul tău.</p>
+                    </div>
+                    <?php endif; ?>
+                    
                     <div class="mt-4">
                         <a href="client-dashboard.html#order-history" class="btn btn-primary me-2">
                             <i class="bi bi-clock-history me-1"></i> Vezi Istoricul Comenzilor
