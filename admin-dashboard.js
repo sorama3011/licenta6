@@ -1,7 +1,5 @@
-/**
- * Admin Dashboard JavaScript
- * Handles chart generation and report functionality
- */
+// Admin Dashboard JavaScript
+// Handles chart generation and report functionality
 
 // Mock data for reports
 const mockData = {
@@ -132,11 +130,49 @@ const chartColors = {
 
 // Initialize charts when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
-    // Set up event listeners for report generation buttons
-    document.getElementById('generateSalesReport').addEventListener('click', generateSalesReport);
-    document.getElementById('generateProductReport').addEventListener('click', generateProductReport);
-    document.getElementById('generateClientReport').addEventListener('click', generateClientReport);
+    // Check if Chart.js is loaded
+    if (typeof Chart === 'undefined') {
+        console.error('Chart.js is not loaded. Please include the Chart.js library.');
+        // Add Chart.js from CDN if not present
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/chart.js';
+        script.onload = initializeReports;
+        document.head.appendChild(script);
+    } else {
+        initializeReports();
+    }
 });
+
+function initializeReports() {
+    // Set up event listeners for report generation buttons
+    const generateSalesReportBtn = document.getElementById('generateSalesReport');
+    const generateProductReportBtn = document.getElementById('generateProductReport');
+    const generateClientReportBtn = document.getElementById('generateClientReport');
+    
+    if (generateSalesReportBtn) {
+        generateSalesReportBtn.addEventListener('click', generateSalesReport);
+    }
+    
+    if (generateProductReportBtn) {
+        generateProductReportBtn.addEventListener('click', generateProductReport);
+    }
+    
+    if (generateClientReportBtn) {
+        generateClientReportBtn.addEventListener('click', generateClientReport);
+    }
+    
+    // Show a default chart if available
+    const salesChartContainer = document.getElementById('salesChartContainer');
+    if (salesChartContainer && !salesChartContainer.querySelector('canvas')) {
+        // Create default canvas if it doesn't exist
+        const canvas = document.createElement('canvas');
+        canvas.id = 'salesChart';
+        salesChartContainer.appendChild(canvas);
+        
+        // Create default monthly sales chart
+        createSalesChart('monthly', 'current');
+    }
+}
 
 /**
  * Generate Sales Report
@@ -148,24 +184,35 @@ function generateSalesReport() {
     const reportFormat = document.getElementById('salesReportFormat').value;
     
     // Hide placeholder
-    document.getElementById('salesReportPlaceholder').style.display = 'none';
+    const placeholder = document.getElementById('salesReportPlaceholder');
+    if (placeholder) {
+        placeholder.style.display = 'none';
+    }
     
     // Show/hide chart and table based on format
     const chartContainer = document.getElementById('salesChartContainer');
     const tableContainer = document.getElementById('salesTableContainer');
     
     if (reportFormat === 'chart' || reportFormat === 'both') {
-        chartContainer.style.display = 'block';
-        createSalesChart(reportType, reportPeriod);
+        if (chartContainer) {
+            chartContainer.style.display = 'block';
+            createSalesChart(reportType, reportPeriod);
+        }
     } else {
-        chartContainer.style.display = 'none';
+        if (chartContainer) {
+            chartContainer.style.display = 'none';
+        }
     }
     
     if (reportFormat === 'table' || reportFormat === 'both') {
-        tableContainer.style.display = 'block';
-        createSalesTable(reportType, reportPeriod);
+        if (tableContainer) {
+            tableContainer.style.display = 'block';
+            createSalesTable(reportType, reportPeriod);
+        }
     } else {
-        tableContainer.style.display = 'none';
+        if (tableContainer) {
+            tableContainer.style.display = 'none';
+        }
     }
 }
 
@@ -174,7 +221,11 @@ function generateSalesReport() {
  */
 function createSalesChart(reportType, reportPeriod) {
     // Get the canvas element
-    const canvas = document.getElementById('salesChart');
+    const canvasElement = document.getElementById('salesChart');
+    if (!canvasElement) {
+        console.error('Canvas element with ID "salesChart" not found');
+        return;
+    }
     
     // Destroy existing chart if it exists
     if (window.salesChart) {
@@ -213,7 +264,7 @@ function createSalesChart(reportType, reportPeriod) {
     }
     
     // Create chart
-    window.salesChart = new Chart(canvas, {
+    window.salesChart = new Chart(canvasElement, {
         type: 'bar',
         data: {
             labels: labels,
@@ -262,7 +313,12 @@ function createSalesChart(reportType, reportPeriod) {
  */
 function createSalesTable(reportType, reportPeriod) {
     // Get the table body
-    const tableBody = document.getElementById('salesTable').querySelector('tbody');
+    const tableBody = document.getElementById('salesTable')?.querySelector('tbody');
+    if (!tableBody) {
+        console.error('Table body element not found');
+        return;
+    }
+    
     tableBody.innerHTML = '';
     
     // Get data based on report type
@@ -317,11 +373,22 @@ function generateProductReport() {
     const reportLimit = parseInt(document.getElementById('productReportLimit').value);
     
     // Hide placeholder
-    document.getElementById('productReportPlaceholder').style.display = 'none';
+    const placeholder = document.getElementById('productReportPlaceholder');
+    if (placeholder) {
+        placeholder.style.display = 'none';
+    }
     
     // Show chart and table
-    document.getElementById('productChartContainer').style.display = 'block';
-    document.getElementById('productTableContainer').style.display = 'block';
+    const chartContainer = document.getElementById('productChartContainer');
+    const tableContainer = document.getElementById('productTableContainer');
+    
+    if (chartContainer) {
+        chartContainer.style.display = 'block';
+    }
+    
+    if (tableContainer) {
+        tableContainer.style.display = 'block';
+    }
     
     // Create chart and table based on report type
     switch (reportType) {
@@ -352,7 +419,11 @@ function generateProductReport() {
  */
 function createBestSellersChart(limit) {
     // Get the canvas element
-    const canvas = document.getElementById('productChart');
+    const canvasElement = document.getElementById('productChart');
+    if (!canvasElement) {
+        console.error('Canvas element with ID "productChart" not found');
+        return;
+    }
     
     // Destroy existing chart if it exists
     if (window.productChart) {
@@ -363,7 +434,7 @@ function createBestSellersChart(limit) {
     const topProducts = mockData.topProducts.slice(0, limit);
     
     // Create chart
-    window.productChart = new Chart(canvas, {
+    window.productChart = new Chart(canvasElement, {
         type: 'bar',
         data: {
             labels: topProducts.map(product => product.name),
@@ -396,17 +467,24 @@ function createBestSellersChart(limit) {
  */
 function createBestSellersTable(limit) {
     // Get the table body
-    const tableBody = document.getElementById('productTable').querySelector('tbody');
-    tableBody.innerHTML = '';
+    const tableBody = document.getElementById('productTable')?.querySelector('tbody');
+    if (!tableBody) {
+        console.error('Table body element not found');
+        return;
+    }
     
     // Get table header
-    const tableHeader = document.getElementById('productTable').querySelector('thead tr');
-    tableHeader.innerHTML = `
-        <th>Produs</th>
-        <th>Categorie</th>
-        <th>Cantitate Vândută</th>
-        <th>Vânzări Totale</th>
-    `;
+    const tableHeader = document.getElementById('productTable')?.querySelector('thead tr');
+    if (tableHeader) {
+        tableHeader.innerHTML = `
+            <th>Produs</th>
+            <th>Categorie</th>
+            <th>Cantitate Vândută</th>
+            <th>Vânzări Totale</th>
+        `;
+    }
+    
+    tableBody.innerHTML = '';
     
     // Get top products based on limit
     const topProducts = mockData.topProducts.slice(0, limit);
@@ -429,7 +507,11 @@ function createBestSellersTable(limit) {
  */
 function createInventoryChart(limit) {
     // Get the canvas element
-    const canvas = document.getElementById('productChart');
+    const canvasElement = document.getElementById('productChart');
+    if (!canvasElement) {
+        console.error('Canvas element with ID "productChart" not found');
+        return;
+    }
     
     // Destroy existing chart if it exists
     if (window.productChart) {
@@ -440,7 +522,7 @@ function createInventoryChart(limit) {
     const products = mockData.inventory.slice(0, limit);
     
     // Create chart
-    window.productChart = new Chart(canvas, {
+    window.productChart = new Chart(canvasElement, {
         type: 'bar',
         data: {
             labels: products.map(product => product.name),
@@ -473,18 +555,25 @@ function createInventoryChart(limit) {
  */
 function createInventoryTable(limit) {
     // Get the table body
-    const tableBody = document.getElementById('productTable').querySelector('tbody');
-    tableBody.innerHTML = '';
+    const tableBody = document.getElementById('productTable')?.querySelector('tbody');
+    if (!tableBody) {
+        console.error('Table body element not found');
+        return;
+    }
     
     // Get table header
-    const tableHeader = document.getElementById('productTable').querySelector('thead tr');
-    tableHeader.innerHTML = `
-        <th>Produs</th>
-        <th>Categorie</th>
-        <th>Stoc</th>
-        <th>Valoare Stoc</th>
-        <th>Status</th>
-    `;
+    const tableHeader = document.getElementById('productTable')?.querySelector('thead tr');
+    if (tableHeader) {
+        tableHeader.innerHTML = `
+            <th>Produs</th>
+            <th>Categorie</th>
+            <th>Stoc</th>
+            <th>Valoare Stoc</th>
+            <th>Status</th>
+        `;
+    }
+    
+    tableBody.innerHTML = '';
     
     // Get products based on limit
     const products = mockData.inventory.slice(0, limit);
@@ -514,7 +603,11 @@ function createInventoryTable(limit) {
  */
 function createCategorySalesChart() {
     // Get the canvas element
-    const canvas = document.getElementById('productChart');
+    const canvasElement = document.getElementById('productChart');
+    if (!canvasElement) {
+        console.error('Canvas element with ID "productChart" not found');
+        return;
+    }
     
     // Destroy existing chart if it exists
     if (window.productChart) {
@@ -522,7 +615,7 @@ function createCategorySalesChart() {
     }
     
     // Create chart
-    window.productChart = new Chart(canvas, {
+    window.productChart = new Chart(canvasElement, {
         type: 'pie',
         data: {
             labels: mockData.categorySales.labels,
@@ -562,16 +655,23 @@ function createCategorySalesChart() {
  */
 function createCategorySalesTable() {
     // Get the table body
-    const tableBody = document.getElementById('productTable').querySelector('tbody');
-    tableBody.innerHTML = '';
+    const tableBody = document.getElementById('productTable')?.querySelector('tbody');
+    if (!tableBody) {
+        console.error('Table body element not found');
+        return;
+    }
     
     // Get table header
-    const tableHeader = document.getElementById('productTable').querySelector('thead tr');
-    tableHeader.innerHTML = `
-        <th>Categorie</th>
-        <th>Vânzări Totale</th>
-        <th>Procent</th>
-    `;
+    const tableHeader = document.getElementById('productTable')?.querySelector('thead tr');
+    if (tableHeader) {
+        tableHeader.innerHTML = `
+            <th>Categorie</th>
+            <th>Vânzări Totale</th>
+            <th>Procent</th>
+        `;
+    }
+    
+    tableBody.innerHTML = '';
     
     // Calculate total sales
     const totalSales = mockData.categorySales.data.reduce((a, b) => a + b, 0);
@@ -605,7 +705,11 @@ function createCategorySalesTable() {
  */
 function createProfitabilityChart(limit) {
     // Get the canvas element
-    const canvas = document.getElementById('productChart');
+    const canvasElement = document.getElementById('productChart');
+    if (!canvasElement) {
+        console.error('Canvas element with ID "productChart" not found');
+        return;
+    }
     
     // Destroy existing chart if it exists
     if (window.productChart) {
@@ -616,7 +720,7 @@ function createProfitabilityChart(limit) {
     const products = mockData.productProfitability.slice(0, limit);
     
     // Create chart
-    window.productChart = new Chart(canvas, {
+    window.productChart = new Chart(canvasElement, {
         type: 'bar',
         data: {
             labels: products.map(product => product.name),
@@ -677,19 +781,26 @@ function createProfitabilityChart(limit) {
  */
 function createProfitabilityTable(limit) {
     // Get the table body
-    const tableBody = document.getElementById('productTable').querySelector('tbody');
-    tableBody.innerHTML = '';
+    const tableBody = document.getElementById('productTable')?.querySelector('tbody');
+    if (!tableBody) {
+        console.error('Table body element not found');
+        return;
+    }
     
     // Get table header
-    const tableHeader = document.getElementById('productTable').querySelector('thead tr');
-    tableHeader.innerHTML = `
-        <th>Produs</th>
-        <th>Categorie</th>
-        <th>Venit</th>
-        <th>Cost</th>
-        <th>Profit</th>
-        <th>Marjă</th>
-    `;
+    const tableHeader = document.getElementById('productTable')?.querySelector('thead tr');
+    if (tableHeader) {
+        tableHeader.innerHTML = `
+            <th>Produs</th>
+            <th>Categorie</th>
+            <th>Venit</th>
+            <th>Cost</th>
+            <th>Profit</th>
+            <th>Marjă</th>
+        `;
+    }
+    
+    tableBody.innerHTML = '';
     
     // Get products based on limit
     const products = mockData.productProfitability.slice(0, limit);
@@ -719,11 +830,22 @@ function generateClientReport() {
     const reportLimit = parseInt(document.getElementById('clientReportLimit').value);
     
     // Hide placeholder
-    document.getElementById('clientReportPlaceholder').style.display = 'none';
+    const placeholder = document.getElementById('clientReportPlaceholder');
+    if (placeholder) {
+        placeholder.style.display = 'none';
+    }
     
     // Show chart and table
-    document.getElementById('clientChartContainer').style.display = 'block';
-    document.getElementById('clientTableContainer').style.display = 'block';
+    const chartContainer = document.getElementById('clientChartContainer');
+    const tableContainer = document.getElementById('clientTableContainer');
+    
+    if (chartContainer) {
+        chartContainer.style.display = 'block';
+    }
+    
+    if (tableContainer) {
+        tableContainer.style.display = 'block';
+    }
     
     // Create chart and table based on report type
     switch (reportType) {
@@ -754,7 +876,11 @@ function generateClientReport() {
  */
 function createTopSpendersChart(limit) {
     // Get the canvas element
-    const canvas = document.getElementById('clientChart');
+    const canvasElement = document.getElementById('clientChart');
+    if (!canvasElement) {
+        console.error('Canvas element with ID "clientChart" not found');
+        return;
+    }
     
     // Destroy existing chart if it exists
     if (window.clientChart) {
@@ -765,7 +891,7 @@ function createTopSpendersChart(limit) {
     const topClients = mockData.topClients.slice(0, limit);
     
     // Create chart
-    window.clientChart = new Chart(canvas, {
+    window.clientChart = new Chart(canvasElement, {
         type: 'bar',
         data: {
             labels: topClients.map(client => client.name),
@@ -815,17 +941,24 @@ function createTopSpendersChart(limit) {
  */
 function createTopSpendersTable(limit) {
     // Get the table body
-    const tableBody = document.getElementById('clientTable').querySelector('tbody');
-    tableBody.innerHTML = '';
+    const tableBody = document.getElementById('clientTable')?.querySelector('tbody');
+    if (!tableBody) {
+        console.error('Table body element not found');
+        return;
+    }
     
     // Get table header
-    const tableHeader = document.getElementById('clientTable').querySelector('thead tr');
-    tableHeader.innerHTML = `
-        <th>Client</th>
-        <th>Email</th>
-        <th>Număr Comenzi</th>
-        <th>Total Cheltuit</th>
-    `;
+    const tableHeader = document.getElementById('clientTable')?.querySelector('thead tr');
+    if (tableHeader) {
+        tableHeader.innerHTML = `
+            <th>Client</th>
+            <th>Email</th>
+            <th>Număr Comenzi</th>
+            <th>Total Cheltuit</th>
+        `;
+    }
+    
+    tableBody.innerHTML = '';
     
     // Get top clients based on limit
     const topClients = mockData.topClients.slice(0, limit);
@@ -848,7 +981,11 @@ function createTopSpendersTable(limit) {
  */
 function createOrderFrequencyChart() {
     // Get the canvas element
-    const canvas = document.getElementById('clientChart');
+    const canvasElement = document.getElementById('clientChart');
+    if (!canvasElement) {
+        console.error('Canvas element with ID "clientChart" not found');
+        return;
+    }
     
     // Destroy existing chart if it exists
     if (window.clientChart) {
@@ -856,7 +993,7 @@ function createOrderFrequencyChart() {
     }
     
     // Create chart
-    window.clientChart = new Chart(canvas, {
+    window.clientChart = new Chart(canvasElement, {
         type: 'bar',
         data: {
             labels: mockData.orderFrequency.map(item => item.frequency),
@@ -896,16 +1033,23 @@ function createOrderFrequencyChart() {
  */
 function createOrderFrequencyTable() {
     // Get the table body
-    const tableBody = document.getElementById('clientTable').querySelector('tbody');
-    tableBody.innerHTML = '';
+    const tableBody = document.getElementById('clientTable')?.querySelector('tbody');
+    if (!tableBody) {
+        console.error('Table body element not found');
+        return;
+    }
     
     // Get table header
-    const tableHeader = document.getElementById('clientTable').querySelector('thead tr');
-    tableHeader.innerHTML = `
-        <th>Frecvență Comenzi</th>
-        <th>Număr Clienți</th>
-        <th>Procent</th>
-    `;
+    const tableHeader = document.getElementById('clientTable')?.querySelector('thead tr');
+    if (tableHeader) {
+        tableHeader.innerHTML = `
+            <th>Frecvență Comenzi</th>
+            <th>Număr Clienți</th>
+            <th>Procent</th>
+        `;
+    }
+    
+    tableBody.innerHTML = '';
     
     // Calculate total clients
     const totalClients = mockData.orderFrequency.reduce((sum, item) => sum + item.clients, 0);
@@ -939,7 +1083,11 @@ function createOrderFrequencyTable() {
  */
 function createClientTypesChart() {
     // Get the canvas element
-    const canvas = document.getElementById('clientChart');
+    const canvasElement = document.getElementById('clientChart');
+    if (!canvasElement) {
+        console.error('Canvas element with ID "clientChart" not found');
+        return;
+    }
     
     // Destroy existing chart if it exists
     if (window.clientChart) {
@@ -947,7 +1095,7 @@ function createClientTypesChart() {
     }
     
     // Create chart
-    window.clientChart = new Chart(canvas, {
+    window.clientChart = new Chart(canvasElement, {
         type: 'doughnut',
         data: {
             labels: mockData.clientTypes.labels,
@@ -987,16 +1135,23 @@ function createClientTypesChart() {
  */
 function createClientTypesTable() {
     // Get the table body
-    const tableBody = document.getElementById('clientTable').querySelector('tbody');
-    tableBody.innerHTML = '';
+    const tableBody = document.getElementById('clientTable')?.querySelector('tbody');
+    if (!tableBody) {
+        console.error('Table body element not found');
+        return;
+    }
     
     // Get table header
-    const tableHeader = document.getElementById('clientTable').querySelector('thead tr');
-    tableHeader.innerHTML = `
-        <th>Tip Client</th>
-        <th>Număr</th>
-        <th>Procent</th>
-    `;
+    const tableHeader = document.getElementById('clientTable')?.querySelector('thead tr');
+    if (tableHeader) {
+        tableHeader.innerHTML = `
+            <th>Tip Client</th>
+            <th>Număr</th>
+            <th>Procent</th>
+        `;
+    }
+    
+    tableBody.innerHTML = '';
     
     // Calculate total clients
     const totalClients = mockData.clientTypes.data.reduce((a, b) => a + b, 0);
@@ -1030,7 +1185,11 @@ function createClientTypesTable() {
  */
 function createClientRegionsChart() {
     // Get the canvas element
-    const canvas = document.getElementById('clientChart');
+    const canvasElement = document.getElementById('clientChart');
+    if (!canvasElement) {
+        console.error('Canvas element with ID "clientChart" not found');
+        return;
+    }
     
     // Destroy existing chart if it exists
     if (window.clientChart) {
@@ -1038,7 +1197,7 @@ function createClientRegionsChart() {
     }
     
     // Create chart
-    window.clientChart = new Chart(canvas, {
+    window.clientChart = new Chart(canvasElement, {
         type: 'pie',
         data: {
             labels: mockData.clientRegions.labels,
@@ -1078,16 +1237,23 @@ function createClientRegionsChart() {
  */
 function createClientRegionsTable() {
     // Get the table body
-    const tableBody = document.getElementById('clientTable').querySelector('tbody');
-    tableBody.innerHTML = '';
+    const tableBody = document.getElementById('clientTable')?.querySelector('tbody');
+    if (!tableBody) {
+        console.error('Table body element not found');
+        return;
+    }
     
     // Get table header
-    const tableHeader = document.getElementById('clientTable').querySelector('thead tr');
-    tableHeader.innerHTML = `
-        <th>Regiune</th>
-        <th>Număr Clienți</th>
-        <th>Procent</th>
-    `;
+    const tableHeader = document.getElementById('clientTable')?.querySelector('thead tr');
+    if (tableHeader) {
+        tableHeader.innerHTML = `
+            <th>Regiune</th>
+            <th>Număr Clienți</th>
+            <th>Procent</th>
+        `;
+    }
+    
+    tableBody.innerHTML = '';
     
     // Calculate total clients
     const totalClients = mockData.clientRegions.data.reduce((a, b) => a + b, 0);
